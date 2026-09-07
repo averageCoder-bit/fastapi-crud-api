@@ -4,6 +4,10 @@ app = FastAPI()
 
 tasks = [{"id": 1, "title":"Do some chores", "done":True}, {"id": 2, "title":"Walk the dog", "done":True}, {"id": 3, "title":"Study", "done":False}]
 
+@app.get("/tasks")
+def read_tasks() -> dict:
+    return {"tasks": tasks}
+
 
 @app.post("/tasks", status_code=201)
 def create_tasks(title: str):
@@ -17,8 +21,25 @@ def create_tasks(title: str):
     }
     tasks.append(task)
     return {"Created":task}
-            
 
-    
+
+@app.put("/tasks/{id}")
+def update_task(id: int, title: str | None = None, done: bool | None = None):
+    for task in tasks:
+        if task["id"] == id:
+            task["title"] = title
+            task["done"] = done
+            return task
+
+    raise HTTPException(status_code=404, detail="Task not found")
+
+@app.delete("/tasks/{id}", status_code=204)
+def delete_task(id: int):
+    for task in tasks:
+        if task["id"] == id:
+            tasks.remove(task)
+            return
+
+    raise HTTPException(status_code=404, detail="Task not found")
     
 
