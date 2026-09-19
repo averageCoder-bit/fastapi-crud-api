@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from database import init_db, get_tasks, get_task
+from database import init_db, get_tasks, get_task, create_task
 
 app = FastAPI()
 init_db()
@@ -33,18 +33,17 @@ def read_task(task_id: int) -> dict:
     }
 
 
-# @app.post("/tasks", status_code=201, summary="Create a task")
-# def create_tasks(title: str):
-#     if title == "":
-#         raise HTTPException(status_code=400, detail="Title cannot be empty")
-#     next_id = max(task["id"] for task in tasks) + 1
-#     task = {
-#         "id":next_id,
-#         "title":title,
-#         "done":False
-#     }
-#     tasks.append(task)
-#     return {"Created":task}
+@app.post("/tasks", status_code=201, summary="Create a task")
+def create_tasks(title: str):
+    if title == "":
+        raise HTTPException(status_code=400, detail="Title cannot be empty")
+    task_id = create_task(title)
+
+    return {
+        "id": task_id,
+        "title": title,
+        "done": False
+    }
 
 
 # @app.put("/tasks/{id}", summary="Update a task")

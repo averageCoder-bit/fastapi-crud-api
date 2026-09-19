@@ -56,5 +56,15 @@ def get_task(task_id: int):
     conn.close()
     return task
 
+def create_task(title: str):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("INSERT INTO tasks (title, done) VALUES (:title, :done)",{"title":title, "done":0})
+    task_id = c.lastrowid
+    conn.commit()
+    conn.close
+    return task_id
+
+
 if __name__ == "__main__":
     init_db()
