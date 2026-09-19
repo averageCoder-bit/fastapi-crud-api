@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from database import init_db, get_tasks, get_task, create_task
+from database import init_db, get_tasks, get_task, create_task, update_task, delete_task_db
 
 app = FastAPI()
 init_db()
@@ -46,23 +46,37 @@ def create_tasks(title: str):
     }
 
 
-# @app.put("/tasks/{id}", summary="Update a task")
-# def update_task(id: int, title: str | None = None, done: bool | None = None):
-#     for task in tasks:
-#         if task["id"] == id:
-#             task["title"] = title
-#             task["done"] = done
-#             return task
+@app.put("/tasks/{task_id}", summary="Update a task")
+def update_tasks(task_id: int, title: str | None = None, done: bool | None = None):
+    if title is None and done is None:
+        raise HTTPException(status_code=400, detail="No fields to update")
 
-#     raise HTTPException(status_code=404, detail="Task not found")
+    existing = get_task(task_id)
 
-# @app.delete("/tasks/{id}", status_code=204, summary="Delete a task")
-# def delete_task(id: int):
-#     for task in tasks:
-#         if task["id"] == id:
-#             tasks.remove(task)
-#             return
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Task not found")
 
-#     raise HTTPException(status_code=404, detail="Task not found")
+    if title is None:
+        title = existing["title"]
+
+    if done is None:
+        done = bool(existing["done"])
+
+    task = update_task(task_id, title, done)
+
+    return {
+        "id": task["id"],
+        "title": task["title"],
+        "done": bool(task["done"])
+    }
+
+@app.delete("/tasks/{task_id}", status_code=204, summary="Delete a task")
+def delete_task(task_id: int):
+    deleted = delete_task_db(task_id)
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return
     
 

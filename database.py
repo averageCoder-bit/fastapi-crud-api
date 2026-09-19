@@ -65,6 +65,46 @@ def create_task(title: str):
     conn.close
     return task_id
 
+def update_task(task_id: int, title: str, done: bool):
+    conn = get_connection()
+    c = conn.cursor()
+
+    c.execute(
+        "UPDATE tasks SET title = ?, done = ? WHERE id = ?",
+        (title, done, task_id)
+    )
+
+    if c.rowcount == 0:
+        conn.close()
+        return None
+
+    conn.commit()
+
+    c.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+    task = c.fetchone()
+
+    conn.close()
+
+    return task
+
+def delete_task_db(task_id: int):
+    conn = get_connection()
+    c = conn.cursor()
+
+    c.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,)
+    )
+
+    if c.rowcount == 0:
+        conn.close()
+        return False
+
+    conn.commit()
+    conn.close()
+
+    return True
+
 
 if __name__ == "__main__":
     init_db()
