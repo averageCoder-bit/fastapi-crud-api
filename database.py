@@ -42,15 +42,19 @@ def init_db():
 
 def get_tasks():
     conn = get_connection()
-
     c = conn.cursor()
     c.execute("SELECT * FROM tasks")
-
     tasks = c.fetchall()
-
     conn.close()
-
     return tasks
+
+def get_task(task_id: int):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+    task = c.fetchone()
+    conn.close()
+    return task
 
 if __name__ == "__main__":
     init_db()
