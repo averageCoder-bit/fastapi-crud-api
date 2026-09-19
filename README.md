@@ -19,6 +19,7 @@ The API provides full CRUD (Create, Read, Update, Delete) functionality for task
 - FastAPI
 - Uvicorn
 - Pydantic
+- SQLite
 
 ## Installation
 
@@ -162,13 +163,36 @@ The API successfully exposes all required CRUD operations through Swagger UI.
 
 ## SQLite Database
 
-The API uses SQLite to persist task data in a local `tasks.db` database file.
+The API uses **SQLite** to persist task data in a local `tasks.db` database file.
 
-The database can also be inspected and modified directly using DB Browser for SQLite.
+SQLite was chosen because:
+
+- The database is stored in a single file.
+- No separate database server or setup is required.
+- Data persists across API restarts.
+- The database is simple to inspect and modify using DB Browser for SQLite.
+
+### Database File
+
+The database file is:
+
+```text
+tasks.db
+```
+
+It is created automatically when the application starts. The application also creates the tasks table and seeds it with three example tasks when the database contains no tasks.
+
+This means a fresh clone does not require any manual database setup. Running the documented command is enough to create the database and start the API.
+
+### DB Browser for SQLite
+
+The tasks.db file can be opened in DB Browser for SQLite to view the database structure, browse task records, and execute SQL queries manually.
+
+![SQLite Database in DB Browser](docs/sqlite-database.png)
 
 ### Stage 4: SQLite Exploration
 
-Query:
+One SQL query executed manually in DB Browser for SQLite was:
 
 ```sql
 UPDATE tasks
@@ -176,6 +200,9 @@ SET done = 1
 WHERE id = 6;
 ```
 
+Execution result:
+
+```text
 Execution finished without errors.
 
 Result: query executed successfully. Took 0ms, 1 rows affected
@@ -185,3 +212,6 @@ At line 1:
 UPDATE tasks
 SET done = 1
 WHERE id = 6;
+```
+
+The query executed successfully and affected 1 row, marking task ID 6 as completed. The change was immediately reflected by the API without restarting the server.
