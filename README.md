@@ -159,3 +159,29 @@ The complete CRUD cycle was tested using Swagger UI:
 4. **Delete** — removed the task using `DELETE /tasks/{id}`
 
 The API successfully exposes all required CRUD operations through Swagger UI.
+
+## SQLite Database
+
+The API uses SQLite to persist task data in a local `tasks.db` database file.
+
+The database can also be inspected and modified directly using DB Browser for SQLite.
+
+### Stage 4: SQLite Exploration
+
+Query:
+
+```sql
+UPDATE tasks
+SET done = 1
+WHERE id = 6;
+```
+
+Execution finished without errors.
+
+Result: query executed successfully. Took 0ms, 1 rows affected
+
+At line 1:
+
+UPDATE tasks
+SET done = 1
+WHERE id = 6;
